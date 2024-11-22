@@ -14,7 +14,6 @@ const App: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");  
   const [username, setUsername] = useState<string>("");  
   const [isUsernameSet, setIsUsernameSet] = useState<boolean>(false);
-  const [messagesLoaded, setMessagesLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     if (isUsernameSet) {
@@ -31,17 +30,13 @@ const App: React.FC = () => {
     if (error) {
       console.error("Erro ao buscar mensagens:", error.message);
     } else {
-      data?.forEach((message: Message) => addMessage(message));
+      data?.forEach((message: Message) => {
+        if (!messages.some((msg) => msg.id === message.id)) {
+          addMessage(message);
+        }
+      });
     }
   };
-
-  useEffect(() => {
-    if (!messagesLoaded) {
-      fetchMessages();
-      setMessagesLoaded(true); 
-    }
-  }, [messagesLoaded]);
-  
 
   const sendMessage = async () => {
     if (newMessage.trim().length === 0) {

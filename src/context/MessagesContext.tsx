@@ -17,9 +17,11 @@ const MessagesContext = createContext<MessagesContextType | undefined>(undefined
 
 export const MessagesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  
+
   const addMessage = async (message: Message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
+    if (!messages.some((msg) => msg.id === message.id)) {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    }
 
     const { error } = await supabase.from('messages').insert([message]);
 
